@@ -1,8 +1,8 @@
 #!/bin/bash -ex
 mkdir -p /etc/pihole/
-export CORE_TAG='v3.2'
-export WEB_TAG='v3.2'
-export FTL_TAG='v2.12'
+export CORE_TAG='v3.2.1'
+export WEB_TAG='v3.2.1'
+export FTL_TAG='v2.13.1'
 export USE_DEVELOPMENT_BRANCHES=false
 
 #     Make pihole scripts fail searching for `systemctl`,
@@ -65,8 +65,8 @@ if [[ $USE_DEVELOPMENT_BRANCHES == true ]] ; then
     pushd "${PI_HOLE_LOCAL_REPO}"; git checkout development; popd;
     pushd "${webInterfaceDir}"; git checkout devel; popd;
 else
-    pushd "${PI_HOLE_LOCAL_REPO}"; 
-    git reset --hard "${CORE_TAG}"; 
+    pushd "${PI_HOLE_LOCAL_REPO}";
+    git reset --hard "${CORE_TAG}";
     # Can be removed once https://github.com/pi-hole/pi-hole/pull/1779 is in a release
     git checkout 8d721d086cbe4b49665c9e0b1d81499b284776a9 gravity.sh
     popd;
@@ -89,14 +89,14 @@ if [[ "$TAG" == 'alpine' ]] ; then
 
     # More chewing gum patching, post installPihole dnsmasq replacement seems to work probably due to dnsmasq uid missing
     apk del dnsmasq && apk add dnsmasq-dnssec
-	
+
     # Fix hostname bug on block page
     sed -i "s/\$_SERVER\['SERVER_NAME'\]/\$_SERVER\['HTTP_HOST'\]/" /var/www/html/pihole/index.php
 fi
- 
+
 mv "${tmpLog}" "${instalLogLoc}"
 touch /.piholeFirstBoot
 
 # Fix dnsmasq in docker
-grep -q '^user=root' || echo -e '\nuser=root' >> /etc/dnsmasq.conf 
+grep -q '^user=root' || echo -e '\nuser=root' >> /etc/dnsmasq.conf
 echo 'Docker install successful'
